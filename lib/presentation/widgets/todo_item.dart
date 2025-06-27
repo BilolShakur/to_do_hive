@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tod_do_or_not_to_do/models/todo.dart';
-import 'package:tod_do_or_not_to_do/theme/app_theme.dart';
+import '../../domain/entities/todo_entity.dart';
+import '../theme/app_theme.dart';
 import 'package:intl/intl.dart';
 
 class TodoItem extends StatelessWidget {
-  final Todo todo;
+  final TodoEntity todo;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
 

@@ -1,34 +1,34 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'todo.dart';
+part of 'todo_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class TodoAdapter extends TypeAdapter<Todo> {
+class TodoModelAdapter extends TypeAdapter<TodoModel> {
   @override
   final int typeId = 0;
 
   @override
-  Todo read(BinaryReader reader) {
+  TodoModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Todo(
+    return TodoModel(
       id: fields[0] as String,
       title: fields[1] as String,
       description: fields[2] as String,
       isCompleted: fields[3] as bool,
       dueDate: fields[4] as DateTime?,
-      createdAt: fields[5] as DateTime?,
-      updatedAt: fields[6] as DateTime?,
+      createdAt: fields[5] as DateTime,
+      updatedAt: fields[6] as DateTime,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Todo obj) {
+  void write(BinaryWriter writer, TodoModel obj) {
     writer
       ..writeByte(7)
       ..writeByte(0)
@@ -53,7 +53,7 @@ class TodoAdapter extends TypeAdapter<Todo> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TodoAdapter &&
+      other is TodoModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

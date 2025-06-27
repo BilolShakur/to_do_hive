@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
 
-part 'todo.g.dart';
+
 
 @HiveType(typeId: 0)
-class Todo extends HiveObject {
+class TodoEntity extends HiveObject {
   @HiveField(0)
   String id;
 
@@ -25,7 +25,7 @@ class Todo extends HiveObject {
   @HiveField(6)
   DateTime updatedAt;
 
-  Todo({
+  TodoEntity({
     required this.id,
     required this.title,
     this.description = '',
@@ -36,7 +36,7 @@ class Todo extends HiveObject {
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
-  Todo copyWith({
+  TodoEntity copyWith({
     String? id,
     String? title,
     String? description,
@@ -45,7 +45,7 @@ class Todo extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return Todo(
+    return TodoEntity(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,

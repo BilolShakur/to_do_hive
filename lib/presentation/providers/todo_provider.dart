@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:tod_do_or_not_to_do/models/todo.dart';
 import 'package:uuid/uuid.dart';
+import '../../domain/entities/todo_entity.dart';
+import '../../domain/usecases/get_todos.dart';
+import '../../domain/usecases/add_todo.dart';
+import '../../domain/usecases/update_todo.dart';
+import '../../domain/usecases/delete_todo.dart';
 
 class TodoProvider extends ChangeNotifier {
-  late Box<Todo> _todoBox;
-  List<Todo> _todos = [];
-  String _filter = 'all'; 
-  String _sortBy = 'createdAt'; 
+  final GetTodos getTodosUseCase;
+  final AddTodo addTodoUseCase;
+  final UpdateTodo updateTodoUseCase;
+  final DeleteTodo deleteTodoUseCase;
 
-  TodoProvider() {
-    _loadTodos();
+  List<TodoEntity> _todos = [];
+  String _filter = 'all';
+  String _sortBy = 'createdAt';
+
+  TodoProvider({
+    required this.getTodosUseCase,
+    required this.addTodoUseCase,
+    required this.updateTodoUseCase,
+    required this.deleteTodoUseCase,
+  }) {
+    loadTodos();
   }
 
-  List<Todo> get todos => _getFilteredAndSortedTodos();
+  List<TodoEntity> get todos => _getFilteredAndSortedTodos();
   String get filter => _filter;
   String get sortBy => _sortBy;
 
-  Future<void> _loadTodos() async {
-    _todoBox = Hive.box<Todo>('todos');
-    _todos = _todoBox.values.toList();
+  Future<void> loadTodos() async {
+    _todos = await getTodosUseCase();
     notifyListeners();
   }
 
-  List<Todo> _getFilteredAndSortedTodos() {
-    List<Todo> filteredTodos = _todos.where((todo) {
+  List<TodoEntity> _getFilteredAndSortedTodos() {
+    List<TodoEntity> filteredTodos = _todos.where((todo) {
       switch (_filter) {
         case 'active':
           return !todo.isCompleted;
@@ -54,30 +65,24 @@ class TodoProvider extends ChangeNotifier {
 
   Future<void> addTodo(String title,
       {String description = '', DateTime? dueDate}) async {
-    final todo = Todo(
+    final todo = TodoEntity(
       id: const Uuid().v4(),
       title: title,
       description: description,
       dueDate: dueDate,
     );
-    await _todoBox.put(todo.id, todo);
-    _todos.add(todo);
-    notifyListeners();
+    await addTodoUseCase(todo);
+    await loadTodos();
   }
 
-  Future<void> updateTodo(Todo todo) async {
-    await _todoBox.put(todo.id, todo);
-    final index = _todos.indexWhere((t) => t.id == todo.id);
-    if (index != -1) {
-      _todos[index] = todo;
-      notifyListeners();
-    }
+  Future<void> updateTodo(TodoEntity todo) async {
+    await updateTodoUseCase(todo);
+    await loadTodos();
   }
 
   Future<void> deleteTodo(String id) async {
-    await _todoBox.delete(id);
-    _todos.removeWhere((todo) => todo.id == id);
-    notifyListeners();
+    await deleteTodoUseCase(id);
+    await loadTodos();
   }
 
   Future<void> toggleTodoCompletion(String id) async {
